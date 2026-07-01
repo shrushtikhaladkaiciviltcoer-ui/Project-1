@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NovaBot | Single File Rule-Based AI Chatbot</title>
+  <meta name="description" content="NovaBot is a rule-based AI chatbot app that teaches project logic and answers linked dataset questions.">
+  <meta name="theme-color" content="#050816">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="app-icon.svg" type="image/svg+xml">
   <style>
     :root {
       color-scheme: dark;
@@ -710,6 +714,12 @@
         form.requestSubmit();
       });
     });
+
+    if ("serviceWorker" in navigator && location.protocol !== "file:") {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("service-worker.js").catch(() => {});
+      });
+    }
 
     addMessage("Hello. I am NovaBot, your complete single-file rule-based AI chatbot.", "bot", "Ready");
   </script>

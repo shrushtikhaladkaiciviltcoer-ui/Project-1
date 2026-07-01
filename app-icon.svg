@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="NovaBot app icon">
+  <defs>
+    <linearGradient id="bg" x1="60" y1="44" x2="452" y2="468" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#42e8f4"/>
+      <stop offset="0.48" stop-color="#ff4ecd"/>
+      <stop offset="1" stop-color="#b7ff5a"/>
+    </linearGradient>
+    <linearGradient id="face" x1="164" y1="146" x2="348" y2="358" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f8fafc"/>
+      <stop offset="1" stop-color="#dff7ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="118" fill="#050816"/>
+  <rect x="38" y="38" width="436" height="436" rx="98" fill="url(#bg)" opacity="0.92"/>
+  <rect x="76" y="76" width="360" height="360" rx="78" fill="#07111f" opacity="0.82"/>
+  <path d="M256 106v42" stroke="#b7ff5a" stroke-width="20" stroke-linecap="round"/>
+  <circle cx="256" cy="96" r="24" fill="#b7ff5a"/>
+  <rect x="134" y="160" width="244" height="184" rx="52" fill="url(#face)"/>
+  <rect x="174" y="212" width="52" height="52" rx="20" fill="#050816"/>
+  <rect x="286" y="212" width="52" height="52" rx="20" fill="#050816"/>
+  <path d="M202 294c28 28 80 28 108 0" fill="none" stroke="#050816" stroke-width="20" stroke-linecap="round"/>
+  <path d="M134 274h-42c-18 0-32-14-32-32v-20" fill="none" stroke="#42e8f4" stroke-width="22" stroke-linecap="round"/>
+  <path d="M378 274h42c18 0 32-14 32-32v-20" fill="none" stroke="#ff4ecd" stroke-width="22" stroke-linecap="round"/>
+  <path d="M190 344l-28 54 70-54" fill="#f8fafc"/>
+</svg>
