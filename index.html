@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NovaBot | Single File Rule-Based AI Chatbot</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f8fafc;
+      --muted: #a8b3c7;
+      --panel: rgba(9, 14, 29, 0.78);
+      --line: rgba(255, 255, 255, 0.16);
+      --cyan: #42e8f4;
+      --pink: #ff4ecd;
+      --lime: #b7ff5a;
+      --orange: #ffb84d;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 12% 16%, rgba(66, 232, 244, 0.32), transparent 28%),
+        radial-gradient(circle at 88% 12%, rgba(255, 78, 205, 0.28), transparent 26%),
+        radial-gradient(circle at 76% 82%, rgba(183, 255, 90, 0.22), transparent 32%),
+        linear-gradient(135deg, #050816 0%, #111827 48%, #15091f 100%);
+      color: var(--ink);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, black, transparent 82%);
+    }
+
+    .top-bar {
+      position: sticky;
+      top: 18px;
+      z-index: 20;
+      display: flex;
+      width: fit-content;
+      max-width: calc(100vw - 28px);
+      gap: 8px;
+      margin: 18px auto 0;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(5, 8, 22, 0.72);
+      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.34);
+      backdrop-filter: blur(18px);
+    }
+
+    .top-bar a,
+    .top-bar span {
+      border-radius: 999px;
+      padding: 10px 15px;
+      color: var(--muted);
+      text-align: center;
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 850;
+    }
+
+    .top-bar span {
+      color: #07111f;
+      background: linear-gradient(135deg, var(--cyan), var(--lime));
+    }
+
+    .top-bar a:hover {
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.10);
+    }
+
+    .page-shell {
+      position: relative;
+      width: min(1180px, calc(100vw - 32px));
+      margin: 34px auto 48px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: clamp(20px, 4vw, 42px);
+      align-items: stretch;
+    }
+
+    .intro,
+    .chat-card,
+    .mini-card {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      background: var(--panel);
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.38);
+      backdrop-filter: blur(22px);
+      overflow: hidden;
+    }
+
+    .intro,
+    .mini-card {
+      padding: clamp(24px, 4vw, 48px);
+    }
+
+    .intro::after,
+    .chat-card::after,
+    .mini-card::after {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      pointer-events: none;
+      border-radius: inherit;
+      background: linear-gradient(135deg, rgba(66, 232, 244, 0.42), rgba(255, 78, 205, 0.22), rgba(183, 255, 90, 0.30));
+      opacity: 0.34;
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask-composite: exclude;
+      padding: 1px;
+    }
+
+    .bot-mark {
+      display: grid;
+      width: 82px;
+      height: 82px;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 24px;
+      font-size: 2.4rem;
+      font-weight: 950;
+      background: linear-gradient(135deg, rgba(66, 232, 244, 0.30), rgba(255, 78, 205, 0.25));
+      box-shadow: 0 0 36px rgba(66, 232, 244, 0.28);
+    }
+
+    .eyebrow {
+      margin: 24px 0 14px;
+      color: var(--lime);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2 {
+      margin: 0;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      font-size: clamp(3.1rem, 8vw, 6.9rem);
+      line-height: 0.9;
+    }
+
+    h2 {
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      line-height: 1.05;
+    }
+
+    .gradient-text {
+      background: linear-gradient(90deg, var(--ink), var(--cyan), var(--pink), var(--lime));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .lead,
+    .mini-card p {
+      max-width: 620px;
+      margin: 22px 0 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 1.6vw, 1.18rem);
+      line-height: 1.7;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .stat {
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 18px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.45rem;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .chat-card {
+      display: grid;
+      grid-template-rows: auto minmax(380px, 58vh) auto auto;
+      min-height: 660px;
+    }
+
+    .chat-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .agent {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      display: grid;
+      width: 44px;
+      height: 44px;
+      place-items: center;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--cyan), var(--pink));
+      color: #07111f;
+      font-size: 1.4rem;
+      font-weight: 950;
+    }
+
+    .agent strong {
+      display: block;
+    }
+
+    .agent span,
+    .source-pill {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .source-pill {
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.08);
+      white-space: nowrap;
+    }
+
+    .messages {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 20px;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+
+    .message {
+      max-width: min(78%, 540px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 20px;
+      padding: 14px 16px;
+      line-height: 1.55;
+      animation: pop 180ms ease both;
+    }
+
+    .message.bot {
+      align-self: flex-start;
+      background: rgba(255, 255, 255, 0.09);
+    }
+
+    .message.user {
+      align-self: flex-end;
+      color: #07111f;
+      background: linear-gradient(135deg, var(--cyan), var(--lime));
+    }
+
+    .message small {
+      display: block;
+      margin-top: 8px;
+      color: inherit;
+      opacity: 0.72;
+    }
+
+    .chips {
+      display: flex;
+      gap: 10px;
+      padding: 0 18px 16px;
+      overflow-x: auto;
+    }
+
+    .chip,
+    .send-button {
+      border: 0;
+      border-radius: 999px;
+      font: inherit;
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .chip {
+      flex: 0 0 auto;
+      padding: 10px 13px;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.10);
+    }
+
+    .chip:hover {
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .composer {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      padding: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .composer input {
+      width: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      padding: 15px 18px;
+      color: var(--ink);
+      font: inherit;
+      background: rgba(255, 255, 255, 0.09);
+      outline: none;
+    }
+
+    .composer input:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 4px rgba(66, 232, 244, 0.15);
+    }
+
+    .send-button {
+      padding: 0 22px;
+      color: #07111f;
+      background: linear-gradient(135deg, var(--pink), var(--orange));
+    }
+
+    .send-button:hover {
+      filter: brightness(1.08);
+    }
+
+    .details {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .mini-card ul {
+      margin: 18px 0 0;
+      padding-left: 20px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    @keyframes pop {
+      from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.98);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .details {
+        grid-template-columns: 1fr;
+      }
+
+      .chat-card {
+        min-height: 620px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .top-bar {
+        width: min(94vw, 360px);
+        justify-content: center;
+      }
+
+      .page-shell {
+        width: min(100vw - 20px, 1180px);
+        margin-top: 20px;
+      }
+
+      .stat-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .message {
+        max-width: 92%;
+      }
+
+      .composer {
+        grid-template-columns: 1fr;
+      }
+
+      .send-button {
+        min-height: 48px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="top-bar" aria-label="Single chatbot navigation">
+    <span>NovaBot</span>
+    <a href="#chatbot">Chat</a>
+    <a href="#sources">Sources</a>
+  </nav>
+
+  <main class="page-shell">
+    <section class="hero" id="chatbot" aria-label="NovaBot chatbot">
+      <div class="intro">
+        <div class="bot-mark" aria-hidden="true">AI</div>
+        <p class="eyebrow">Rule-based AI chatbot</p>
+        <h1>Meet <span class="gradient-text">NovaBot</span></h1>
+        <p class="lead">
+          A complete single-file chatbot with its style, rule logic, and linked project data all packed into this one HTML page.
+        </p>
+
+        <div class="stat-grid" aria-label="Linked dataset highlights">
+          <div class="stat">
+            <strong>1,200</strong>
+            <span>orders linked</span>
+          </div>
+          <div class="stat">
+            <strong>$1.26M</strong>
+            <span>tracked revenue</span>
+          </div>
+          <div class="stat">
+            <strong>7</strong>
+            <span>product types</span>
+          </div>
+          <div class="stat">
+            <strong>21</strong>
+            <span>PDF pages reviewed</span>
+          </div>
+        </div>
+      </div>
+
+      <section class="chat-card" aria-label="Chat window">
+        <header class="chat-top">
+          <div class="agent">
+            <div class="avatar" aria-hidden="true">N</div>
+            <div>
+              <strong>NovaBot</strong>
+              <span>Rule engine online</span>
+            </div>
+          </div>
+          <span class="source-pill">All-in-one HTML</span>
+        </header>
+
+        <div class="messages" id="messages" aria-live="polite"></div>
+
+        <div class="chips" aria-label="Quick prompts">
+          <button class="chip" type="button" data-prompt="hello">Hello</button>
+          <button class="chip" type="button" data-prompt="project goal">Project goal</button>
+          <button class="chip" type="button" data-prompt="total revenue">Revenue</button>
+          <button class="chip" type="button" data-prompt="product breakdown">Products</button>
+          <button class="chip" type="button" data-prompt="order status">Status</button>
+          <button class="chip" type="button" data-prompt="coupon usage">Coupons</button>
+        </div>
+
+        <form class="composer" id="chat-form">
+          <input id="chat-input" type="text" autocomplete="off" placeholder="Ask about products, revenue, status, coupons, or project rules">
+          <button class="send-button" type="submit">Send</button>
+        </form>
+      </section>
+    </section>
+
+    <section class="details" id="sources" aria-label="Chatbot sources and rules">
+      <article class="mini-card">
+        <p class="eyebrow">Project source</p>
+        <h2>Artificial intelligence P1.pdf</h2>
+        <p>
+          The chatbot follows the Project 1 brief: greet users, handle exit commands, use if-else response logic, and keep running in a continuous chat loop.
+        </p>
+        <ul>
+          <li>Control flow</li>
+          <li>Decision-making logic</li>
+          <li>Basic AI concepts</li>
+        </ul>
+      </article>
+
+      <article class="mini-card">
+        <p class="eyebrow">Dataset source</p>
+        <h2>Dataset for Data Analytics.xlsx</h2>
+        <p>
+          The chatbot can answer from summarized order analytics, including revenue, products, payment methods, coupons, referral sources, and order status counts.
+        </p>
+        <ul>
+          <li>Orders: 1,200</li>
+          <li>Unique customers: 1,189</li>
+          <li>Date range: 2023-01-01 to 2025-06-30</li>
+        </ul>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const CHATBOT_DATA = {
+      project: {
+        title: "Project 1: Rule-Based AI Chatbot",
+        source: "Artificial intelligence P1.pdf",
+        goal: "Create a simple rule-based chatbot that responds to predefined user inputs.",
+        requirements: [
+          "Handle greetings and exit commands",
+          "Use if-else logic for responses",
+          "Run in a continuous loop"
+        ],
+        skills: [
+          "Control flow",
+          "Decision-making logic",
+          "Basic AI concepts"
+        ]
+      },
+      analytics: {
+        source: "Dataset for Data Analytics.xlsx",
+        rows: 1200,
+        dateRange: ["2023-01-01", "2025-06-30"],
+        totalRevenue: 1264761.96,
+        avgOrderValue: 1053.97,
+        uniqueCustomers: 1189,
+        products: {
+          Printer: 181,
+          Tablet: 179,
+          Chair: 178,
+          Laptop: 173,
+          Desk: 170,
+          Monitor: 163,
+          Phone: 156
+        },
+        statusCounts: {
+          Cancelled: 250,
+          Returned: 247,
+          Pending: 237,
+          Shipped: 235,
+          Delivered: 231
+        },
+        paymentMethods: {
+          Online: 258,
+          Cash: 246,
+          "Credit Card": 234,
+          "Debit Card": 232,
+          "Gift Card": 230
+        },
+        coupons: {
+          FREESHIP: 313,
+          WINTER15: 292,
+          SAVE10: 286
+        },
+        referrals: {
+          Instagram: 259,
+          Email: 250,
+          Google: 241,
+          Facebook: 228,
+          Referral: 222
+        },
+        topRevenueProducts: {
+          Chair: 195620.11,
+          Printer: 195612.61,
+          Laptop: 192126.56,
+          Tablet: 186568.95,
+          Monitor: 175651.41,
+          Desk: 167459.93,
+          Phone: 151722.39
+        },
+        sampleOrders: [
+          {
+            orderId: "ORD200000",
+            date: "2023-01-04",
+            product: "Monitor",
+            quantity: 5,
+            status: "Shipped",
+            paymentMethod: "Debit Card",
+            couponCode: "SAVE10",
+            referralSource: "Instagram",
+            totalPrice: 2853.10,
+            trackingNumber: "TRK37947903"
+          },
+          {
+            orderId: "ORD200001",
+            date: "2024-08-23",
+            product: "Phone",
+            quantity: 2,
+            status: "Shipped",
+            paymentMethod: "Online",
+            couponCode: "SAVE10",
+            referralSource: "Referral",
+            totalPrice: 302.70,
+            trackingNumber: "TRK91186779"
+          },
+          {
+            orderId: "ORD200002",
+            date: "2024-02-27",
+            product: "Tablet",
+            quantity: 5,
+            status: "Cancelled",
+            paymentMethod: "Credit Card",
+            couponCode: "FREESHIP",
+            referralSource: "Email",
+            totalPrice: 2753.40,
+            trackingNumber: "TRK42903982"
+          }
+        ]
+      }
+    };
+
+    const messages = document.querySelector("#messages");
+    const form = document.querySelector("#chat-form");
+    const input = document.querySelector("#chat-input");
+    const chips = document.querySelectorAll("[data-prompt]");
+    const data = CHATBOT_DATA;
+
+    function currency(value) {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0
+      }).format(value);
+    }
+
+    function listFromObject(object, formatter = (key, value) => `${key}: ${value}`) {
+      return Object.entries(object).map(([key, value]) => formatter(key, value)).join("<br>");
+    }
+
+    function addMessage(text, sender = "bot", note = "") {
+      const message = document.createElement("div");
+      message.className = `message ${sender}`;
+      message.innerHTML = `${text}${note ? `<small>${note}</small>` : ""}`;
+      messages.appendChild(message);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function findOrder(text) {
+      const upper = text.toUpperCase();
+      return data.analytics.sampleOrders.find((order) => upper.includes(order.orderId));
+    }
+
+    function replyTo(rawText) {
+      const text = rawText.toLowerCase().trim();
+      const order = findOrder(rawText);
+
+      if (!text) {
+        return "Drop a message first and I will match it with my rule engine.";
+      } else if (text.includes("bye") || text.includes("exit") || text.includes("quit") || text.includes("stop")) {
+        return "Session closed in style. Type hello whenever you want to restart the loop.";
+      } else if (text.includes("hello") || text.includes("hi") || text.includes("hey") || text.includes("namaste")) {
+        return "Hey, I am NovaBot. I use rule-based if-else logic and the linked project data to answer your questions.";
+      } else if (text.includes("help") || text.includes("what can you do")) {
+        return "I can answer about the project goal, requirements, dataset size, revenue, products, order status, payment methods, coupons, referrals, and sample order tracking.";
+      } else if (text.includes("goal") || text.includes("project")) {
+        return `${data.project.title}<br>${data.project.goal}<br><br>Key requirements:<br>${data.project.requirements.join("<br>")}`;
+      } else if (text.includes("skill")) {
+        return `This project builds: ${data.project.skills.join(", ")}.`;
+      } else if (text.includes("dataset") || text.includes("data")) {
+        return `The linked dataset has ${data.analytics.rows.toLocaleString()} orders, ${data.analytics.uniqueCustomers.toLocaleString()} unique customers, and covers ${data.analytics.dateRange[0]} to ${data.analytics.dateRange[1]}.`;
+      } else if (text.includes("revenue") || text.includes("sales") || text.includes("total")) {
+        return `Total revenue is ${currency(data.analytics.totalRevenue)}. Average order value is ${currency(data.analytics.avgOrderValue)}.`;
+      } else if (text.includes("product") || text.includes("items")) {
+        return `Product counts:<br>${listFromObject(data.analytics.products)}<br><br>Top revenue products:<br>${listFromObject(data.analytics.topRevenueProducts, (key, value) => `${key}: ${currency(value)}`)}`;
+      } else if (text.includes("status") || text.includes("delivered") || text.includes("cancelled") || text.includes("pending") || text.includes("returned") || text.includes("shipped")) {
+        return `Order status breakdown:<br>${listFromObject(data.analytics.statusCounts)}`;
+      } else if (text.includes("payment") || text.includes("cash") || text.includes("card") || text.includes("online")) {
+        return `Payment method usage:<br>${listFromObject(data.analytics.paymentMethods)}`;
+      } else if (text.includes("coupon") || text.includes("discount") || text.includes("save10") || text.includes("freeship") || text.includes("winter15")) {
+        return `Coupon code usage:<br>${listFromObject(data.analytics.coupons)}`;
+      } else if (text.includes("referral") || text.includes("source") || text.includes("instagram") || text.includes("email") || text.includes("google") || text.includes("facebook")) {
+        return `Referral sources:<br>${listFromObject(data.analytics.referrals)}`;
+      } else if (order || text.includes("tracking") || text.includes("sample order")) {
+        const selected = order || data.analytics.sampleOrders[0];
+        return `Sample order ${selected.orderId}: ${selected.product}, quantity ${selected.quantity}, status ${selected.status}, paid by ${selected.paymentMethod}, total ${currency(selected.totalPrice)}, tracking ${selected.trackingNumber}.`;
+      } else if (text.includes("source") || text.includes("linked")) {
+        return `I am linked to ${data.project.source} for project rules and ${data.analytics.source} for analytics facts. Everything needed to run is now inside this single HTML file.`;
+      } else {
+        return "I do not have that rule yet. Try asking about revenue, products, status, payment, coupons, referrals, project goal, or say exit.";
+      }
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const text = input.value;
+      addMessage(text, "user");
+      input.value = "";
+      window.setTimeout(() => addMessage(replyTo(text), "bot", "Rule matched with if-else logic"), 220);
+    });
+
+    chips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        input.value = chip.dataset.prompt;
+        form.requestSubmit();
+      });
+    });
+
+    addMessage("Hello. I am NovaBot, your complete single-file rule-based AI chatbot.", "bot", "Ready");
+  </script>
+</body>
+</html>
