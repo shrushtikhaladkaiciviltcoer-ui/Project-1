@@ -1,0 +1,19 @@
+{
+  "name": "NovaBot Rule-Based AI Chatbot",
+  "short_name": "NovaBot",
+  "description": "A Gen Z-style rule-based AI chatbot app for project logic, basic AI concepts, and dataset answers.",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#050816",
+  "theme_color": "#050816",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
