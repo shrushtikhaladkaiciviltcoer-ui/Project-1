@@ -3,259 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>About | Hello World</title>
-  <style>
-    :root {
-      color-scheme: dark;
-      --ink: #f7f4ee;
-      --muted: #b9c1c9;
-      --blue: #4cc9f0;
-      --coral: #ff6b6b;
-      --gold: #ffd166;
-      --green: #6ee7b7;
-      --panel: rgba(13, 18, 32, 0.68);
-      --line: rgba(255, 255, 255, 0.18);
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow-x: hidden;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background:
-        radial-gradient(circle at 15% 24%, rgba(255, 209, 102, 0.30), transparent 28%),
-        radial-gradient(circle at 82% 20%, rgba(76, 201, 240, 0.30), transparent 30%),
-        radial-gradient(circle at 48% 88%, rgba(255, 107, 107, 0.24), transparent 34%),
-        #0b1020;
-      color: var(--ink);
-    }
-
-    .site-nav {
-      position: fixed;
-      top: 24px;
-      left: 50%;
-      z-index: 10;
-      display: flex;
-      gap: 8px;
-      padding: 8px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: rgba(8, 13, 25, 0.70);
-      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.24);
-      backdrop-filter: blur(18px);
-      transform: translateX(-50%);
-    }
-
-    .site-nav a {
-      min-width: 86px;
-      border-radius: 999px;
-      padding: 10px 15px;
-      color: var(--muted);
-      text-align: center;
-      text-decoration: none;
-      font-size: 0.92rem;
-      font-weight: 800;
-      transition: color 180ms ease, background 180ms ease, transform 180ms ease;
-    }
-
-    .site-nav a:hover {
-      color: var(--ink);
-      background: rgba(255, 255, 255, 0.10);
-      transform: translateY(-1px);
-    }
-
-    .site-nav a[aria-current="page"] {
-      color: #07111f;
-      background: linear-gradient(135deg, var(--gold), var(--green));
-    }
-
-    .stage {
-      position: relative;
-      width: min(92vw, 940px);
-      margin: 96px 0 32px;
-      padding: clamp(28px, 5vw, 64px);
-      border: 1px solid var(--line);
-      border-radius: 28px;
-      background: var(--panel);
-      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.42);
-      backdrop-filter: blur(22px);
-      isolation: isolate;
-    }
-
-    .stage::before {
-      content: "";
-      position: absolute;
-      inset: -1px;
-      z-index: -1;
-      border-radius: inherit;
-      background: linear-gradient(135deg, rgba(255, 209, 102, 0.48), rgba(76, 201, 240, 0.48), rgba(255, 107, 107, 0.42));
-      opacity: 0.34;
-      filter: blur(18px);
-    }
-
-    .eyebrow {
-      margin: 0 0 18px;
-      font-size: 0.82rem;
-      font-weight: 700;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--gold);
-    }
-
-    h1 {
-      max-width: 760px;
-      margin: 0;
-      font-size: clamp(2.8rem, 8vw, 6.6rem);
-      line-height: 0.95;
-      letter-spacing: 0;
-    }
-
-    .gradient-text {
-      background: linear-gradient(90deg, var(--ink), var(--blue), var(--gold), var(--coral));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .content {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: clamp(22px, 4vw, 44px);
-      margin-top: 34px;
-      align-items: start;
-    }
-
-    p {
-      margin: 0;
-      color: var(--muted);
-      font-size: clamp(1rem, 1.7vw, 1.18rem);
-      line-height: 1.75;
-    }
-
-    .facts {
-      display: grid;
-      gap: 14px;
-    }
-
-    .fact {
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 18px;
-      padding: 18px;
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .fact strong {
-      display: block;
-      margin-bottom: 6px;
-      color: var(--ink);
-      font-size: 1rem;
-    }
-
-    .fact span {
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      margin-top: 34px;
-    }
-
-    .button {
-      border: 1px solid rgba(255, 255, 255, 0.24);
-      border-radius: 999px;
-      padding: 13px 20px;
-      color: var(--ink);
-      text-decoration: none;
-      font-weight: 800;
-      background: rgba(255, 255, 255, 0.10);
-      transition: transform 180ms ease, background 180ms ease;
-    }
-
-    .button.primary {
-      border-color: transparent;
-      background: linear-gradient(135deg, var(--blue), var(--green));
-      color: #07111f;
-    }
-
-    .button:hover {
-      transform: translateY(-3px);
-      background: rgba(255, 255, 255, 0.16);
-    }
-
-    @media (max-width: 720px) {
-      .content {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 560px) {
-      .site-nav {
-        top: 14px;
-        width: min(92vw, 360px);
-        justify-content: center;
-      }
-
-      .site-nav a {
-        min-width: 0;
-        flex: 1;
-        padding-inline: 10px;
-      }
-
-      .stage {
-        margin-top: 88px;
-        border-radius: 22px;
-      }
-
-      .actions {
-        flex-direction: column;
-      }
-    }
-  </style>
+  <title>About | NovaBot</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <nav class="site-nav" aria-label="Primary navigation">
-    <a href="index.html">Home</a>
+    <a href="index.html">Bot</a>
     <a href="about.html" aria-current="page">About</a>
     <a href="contact.html">Contact</a>
   </nav>
 
-  <main class="stage" aria-label="About page">
-    <p class="eyebrow">About this project</p>
-    <h1>A small site with a <span class="gradient-text">big first impression</span>.</h1>
+  <main class="page-shell">
+    <section class="page-card" aria-label="About NovaBot">
+      <p class="eyebrow">About the build</p>
+      <h1>Built with <span class="gradient-text">rules, data, and style</span>.</h1>
 
-    <section class="content">
-      <div>
-        <p>
-          This little website started as a simple hello and grew into a polished mini-experience. It keeps things lightweight, stylish, and easy to open from any folder while still feeling like a real site.
-        </p>
-        <div class="actions" aria-label="About page actions">
-          <a class="button primary" href="contact.html">Get In Touch</a>
-          <a class="button" href="index.html">Back Home</a>
+      <div class="content-grid">
+        <div>
+          <p class="lead">
+            NovaBot follows the Project 1 brief: it handles greetings and exit commands, uses clear if-else decisions, and keeps the chat loop active in the browser.
+          </p>
+          <a class="button" href="index.html">Launch Bot</a>
         </div>
-      </div>
 
-      <div class="facts" aria-label="Project highlights">
-        <div class="fact">
-          <strong>Responsive</strong>
-          <span>Designed to look clean on desktop and mobile screens.</span>
-        </div>
-        <div class="fact">
-          <strong>Self-contained</strong>
-          <span>No setup, no build tools, just open the files and enjoy.</span>
-        </div>
-        <div class="fact">
-          <strong>Linked together</strong>
-          <span>Home, About, and Contact pages share the same navigation.</span>
+        <div class="info-list" aria-label="Project details">
+          <div class="info-box">
+            <strong>PDF Source</strong>
+            <span>Artificial intelligence P1.pdf defines the rule-based chatbot goal and requirements.</span>
+          </div>
+          <div class="info-box">
+            <strong>Excel Source</strong>
+            <span>Dataset for Data Analytics.xlsx powers the answers about orders, products, revenue, payments, coupons, and referrals.</span>
+          </div>
+          <div class="info-box">
+            <strong>Rule Engine</strong>
+            <span>The chatbot responds through predefined conditions in JavaScript.</span>
+          </div>
         </div>
       </div>
     </section>

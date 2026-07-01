@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact | NovaBot</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="site-nav" aria-label="Primary navigation">
+    <a href="index.html">Bot</a>
+    <a href="about.html">About</a>
+    <a href="contact.html" aria-current="page">Contact</a>
+  </nav>
+
+  <main class="page-shell">
+    <section class="page-card" aria-label="Contact page">
+      <p class="eyebrow">Contact</p>
+      <h1>Send a <span class="gradient-text">signal</span>.</h1>
+
+      <div class="contact-grid">
+        <div class="info-list">
+          <a class="contact-link" href="mailto:hello@example.com">
+            <strong>Email</strong>
+            <span>hello@example.com</span>
+          </a>
+          <a class="contact-link" href="tel:+10000000000">
+            <strong>Phone</strong>
+            <span>+1 000 000 0000</span>
+          </a>
+          <a class="contact-link" href="index.html">
+            <strong>NovaBot</strong>
+            <span>Open the chatbot</span>
+          </a>
+        </div>
+
+        <form>
+          <label>
+            Name
+            <input type="text" name="name" placeholder="Your name">
+          </label>
+          <label>
+            Message
+            <textarea name="message" placeholder="Write your message"></textarea>
+          </label>
+          <button class="send-button" type="button">Send Message</button>
+        </form>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
